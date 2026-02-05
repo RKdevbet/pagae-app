@@ -158,5 +158,18 @@ export async function registerRoutes(
     }
   });
 
+  // === NOTIFICATIONS ROUTES ===
+  app.get("/api/notifications", async (req, res) => {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    const notifications = await storage.getNotifications((req.user as any).claims.sub);
+    res.json(notifications);
+  });
+
+  app.patch("/api/notifications/:id/read", async (req, res) => {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    await storage.markNotificationRead(Number(req.params.id));
+    res.status(204).send();
+  });
+
   return httpServer;
 }

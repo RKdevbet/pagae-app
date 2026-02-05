@@ -135,7 +135,7 @@ export default function Invoices() {
                                             <DropdownMenuTrigger asChild>
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground">
                                                     <MoreHorizontal className="size-4" />
-                                                </DropdownMenuTrigger>
+                                                </Button>
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-40 rounded-xl">
                                                 <DropdownMenuItem onClick={() => handleEdit(inv)}>

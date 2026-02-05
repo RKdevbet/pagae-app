@@ -1,11 +1,11 @@
 import { db } from "./db";
 import { 
-  invoices, credits, aiReports, users,
+  invoices, credits, aiReports, users, notifications,
   type InsertInvoice, type UpdateInvoiceRequest, type Invoice,
   type InsertUser, type User,
-  type AiReport
+  type AiReport, type Notification, type InsertNotification
 } from "@shared/schema";
-import { eq, and, gte, lte } from "drizzle-orm";
+import { eq, and, gte, lte, desc } from "drizzle-orm";
 
 export interface IStorage {
   // Users (from Auth)
@@ -28,6 +28,11 @@ export interface IStorage {
   // AI Reports
   createAiReport(userId: string, type: string, content: any): Promise<AiReport>;
   getAiReports(userId: string): Promise<AiReport[]>;
+
+  // Notifications
+  getNotifications(userId: string): Promise<Notification[]>;
+  createNotification(userId: string, notification: InsertNotification): Promise<Notification>;
+  markNotificationRead(id: number): Promise<void>;
 }
 
 export class DatabaseStorage implements IStorage {
@@ -130,6 +135,23 @@ export class DatabaseStorage implements IStorage {
 
   async getAiReports(userId: string): Promise<AiReport[]> {
     return db.select().from(aiReports).where(eq(aiReports.userId, userId));
+  }
+
+  // --- Notifications ---
+  async getNotifications(userId: string): Promise<Notification[]> {
+    return db.select().from(notifications).where(eq(notifications.userId, userId)).orderBy(desc(notifications.createdAt));
+  }
+
+  async createNotification(userId: string, notification: InsertNotification): Promise<Notification> {
+    const [newNotification] = await db
+      .insert(notifications)
+      .values({ ...notification, userId })
+      .returning();
+    return newNotification;
+  }
+
+  async markNotificationRead(id: number): Promise<void> {
+    await db.update(notifications).set({ read: true }).where(eq(notifications.id, id));
   }
 }
 
