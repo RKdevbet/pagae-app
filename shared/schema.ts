@@ -1,18 +1,114 @@
-import { sql } from "drizzle-orm";
-import { pgTable, text, varchar } from "drizzle-orm/pg-core";
+import { pgTable, text, serial, integer, boolean, timestamp, numeric, jsonb } from "drizzle-orm/pg-core";
 import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod";
+import { relations } from "drizzle-orm";
 
-export const users = pgTable("users", {
-  id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
-  username: text("username").notNull().unique(),
-  password: text("password").notNull(),
+// === AUTH & USERS (From Replit Auth) ===
+// Re-exporting from auth models is handled in index.ts or by import, 
+// but we need to reference users here if we want foreign keys.
+// Assuming "users" table exists from the auth setup.
+import { users } from "./models/auth";
+export * from "./models/auth"; // Re-export auth models
+
+// === TABLE DEFINITIONS ===
+
+export const invoices = pgTable("invoices", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => users.id),
+  payee: text("payee").notNull(),
+  description: text("description"),
+  amount: numeric("amount").notNull(), // Using numeric for currency
+  dueDate: timestamp("due_date").notNull(),
+  status: text("status", { enum: ["paid", "unpaid", "overdue"] }).default("unpaid").notNull(),
+  paidAmount: numeric("paid_amount").default("0").notNull(),
+  isRecurring: boolean("is_recurring").default(false),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export const insertUserSchema = createInsertSchema(users).pick({
-  username: true,
-  password: true,
+export const credits = pgTable("credits", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => users.id),
+  balance: integer("balance").default(0).notNull(),
+  updatedAt: timestamp("updated_at").defaultNow(),
 });
 
-export type InsertUser = z.infer<typeof insertUserSchema>;
-export type User = typeof users.$inferSelect;
+export const aiReports = pgTable("ai_reports", {
+  id: serial("id").primaryKey(),
+  userId: text("user_id").notNull().references(() => users.id),
+  reportType: text("report_type").notNull(), // e.g., "monthly_summary", "spending_analysis"
+  content: jsonb("content").notNull(), // Structured AI response
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
+// === RELATIONS ===
+export const invoicesRelations = relations(invoices, ({ one }) => ({
+  user: one(users, {
+    fields: [invoices.userId],
+    references: [users.id],
+  }),
+}));
+
+export const creditsRelations = relations(credits, ({ one }) => ({
+  user: one(users, {
+    fields: [credits.userId],
+    references: [users.id],
+  }),
+}));
+
+export const aiReportsRelations = relations(aiReports, ({ one }) => ({
+  user: one(users, {
+    fields: [aiReports.userId],
+    references: [users.id],
+  }),
+}));
+
+
+// === BASE SCHEMAS ===
+export const insertInvoiceSchema = createInsertSchema(invoices).omit({ 
+  id: true, 
+  userId: true, 
+  createdAt: true, 
+  updatedAt: true 
+}).extend({
+  amount: z.coerce.number().min(0, "Amount must be positive"),
+  paidAmount: z.coerce.number().min(0).optional(),
+  dueDate: z.coerce.date(),
+});
+
+export const insertCreditSchema = createInsertSchema(credits).omit({
+  id: true,
+  userId: true,
+  updatedAt: true
+});
+
+// === EXPLICIT API CONTRACT TYPES ===
+
+// Base types
+export type Invoice = typeof invoices.$inferSelect;
+export type InsertInvoice = z.infer<typeof insertInvoiceSchema>;
+export type Credit = typeof credits.$inferSelect;
+export type AiReport = typeof aiReports.$inferSelect;
+
+// Request types
+export type CreateInvoiceRequest = InsertInvoice;
+export type UpdateInvoiceRequest = Partial<InsertInvoice>;
+
+// Response types
+export type InvoiceResponse = Invoice;
+export type InvoicesListResponse = Invoice[];
+export type CreditBalanceResponse = { balance: number };
+
+// AI Types
+export type GenerateReportRequest = {
+  startDate?: string; // ISO date string
+  endDate?: string;   // ISO date string
+};
+
+export type AiReportResponse = {
+  summary: string;
+  recommendations: string[];
+  totalSpent: number;
+  remainingDue: number;
+  upcomingBills: Invoice[];
+};
