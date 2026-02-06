@@ -171,5 +171,24 @@ export async function registerRoutes(
     res.status(204).send();
   });
 
+  // Settings
+  app.patch("/api/user/settings", async (req, res) => {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    const userId = (req.user as any).claims.sub;
+    const { language, currency, notificationsEnabled, balance } = req.body;
+    
+    const [updated] = await db.update(users)
+      .set({ 
+        ...(language && { language }),
+        ...(currency && { currency }),
+        ...(notificationsEnabled !== undefined && { notificationsEnabled }),
+        ...(balance !== undefined && { balance: balance.toString() }),
+        updatedAt: new Date() 
+      })
+      .where(eq(users.id, userId))
+      .returning();
+    res.json(updated);
+  });
+
   return httpServer;
 }

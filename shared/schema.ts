@@ -4,11 +4,8 @@ import { z } from "zod";
 import { relations } from "drizzle-orm";
 
 // === AUTH & USERS (From Replit Auth) ===
-// Re-exporting from auth models is handled in index.ts or by import, 
-// but we need to reference users here if we want foreign keys.
-// Assuming "users" table exists from the auth setup.
 import { users } from "./models/auth";
-export * from "./models/auth"; // Re-export auth models
+export * from "./models/auth";
 
 // === TABLE DEFINITIONS ===
 
@@ -17,11 +14,13 @@ export const invoices = pgTable("invoices", {
   userId: text("user_id").notNull().references(() => users.id),
   payee: text("payee").notNull(),
   description: text("description"),
-  amount: numeric("amount").notNull(), // Using numeric for currency
+  amount: numeric("amount").notNull(),
   dueDate: timestamp("due_date").notNull(),
   status: text("status", { enum: ["paid", "unpaid", "overdue"] }).default("unpaid").notNull(),
   paidAmount: numeric("paid_amount").default("0").notNull(),
-  isRecurring: boolean("is_recurring").default(false),
+  recurrenceType: text("recurrence_type", { enum: ["none", "monthly", "annual", "installment"] }).default("none").notNull(),
+  totalInstallments: integer("total_installments"),
+  currentInstallment: integer("current_installment"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),
 });
@@ -74,6 +73,8 @@ export const insertInvoiceSchema = createInsertSchema(invoices).omit({
   amount: z.coerce.number().min(0, "Amount must be positive"),
   paidAmount: z.coerce.number().min(0).optional(),
   dueDate: z.coerce.date(),
+  totalInstallments: z.coerce.number().optional(),
+  currentInstallment: z.coerce.number().optional(),
 });
 
 export const insertCreditSchema = createInsertSchema(credits).omit({

@@ -16,9 +16,17 @@ class AuthStorage implements IAuthStorage {
   }
 
   async upsertUser(userData: UpsertUser): Promise<User> {
+    // Preserve existing balance and settings if user exists
+    const existing = await this.getUser(userData.id);
     const [user] = await db
       .insert(users)
-      .values(userData)
+      .values({
+        ...userData,
+        balance: existing?.balance ?? "0",
+        language: existing?.language ?? "en",
+        currency: existing?.currency ?? "USD",
+        notificationsEnabled: existing?.notificationsEnabled ?? true,
+      })
       .onConflictDoUpdate({
         target: users.id,
         set: {

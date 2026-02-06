@@ -73,11 +73,54 @@ export class DatabaseStorage implements IStorage {
   }
 
   async updateInvoice(id: number, updates: UpdateInvoiceRequest): Promise<Invoice> {
+    const existing = await this.getInvoice(id);
+    if (!existing) throw new Error("Invoice not found");
+
     const [updated] = await db
       .update(invoices)
       .set({ ...updates, updatedAt: new Date() })
       .where(eq(invoices.id, id))
       .returning();
+
+    // Balance logic: If marking as paid, subtract from user balance
+    if (updates.status === "paid" && existing.status !== "paid") {
+      const user = await this.getUser(existing.userId);
+      if (user) {
+        const newBalance = Number(user.balance) - Number(updated.amount);
+        await db.update(users).set({ balance: newBalance.toString() }).where(eq(users.id, user.id));
+        
+        // Auto-regeneration for recurring bills
+        if (updated.recurrenceType !== "none") {
+          const nextDueDate = new Date(updated.dueDate);
+          if (updated.recurrenceType === "monthly") nextDueDate.setMonth(nextDueDate.getMonth() + 1);
+          if (updated.recurrenceType === "annual") nextDueDate.setFullYear(nextDueDate.getFullYear() + 1);
+          
+          if (updated.recurrenceType === "installment") {
+            const current = (updated.currentInstallment || 0) + 1;
+            const total = updated.totalInstallments || 0;
+            if (current <= total) {
+              await this.createInvoice(updated.userId, {
+                payee: updated.payee,
+                amount: updated.amount,
+                dueDate: nextDueDate,
+                recurrenceType: "installment",
+                currentInstallment: current,
+                totalInstallments: total,
+                status: "unpaid",
+              });
+            }
+          } else {
+            await this.createInvoice(updated.userId, {
+              payee: updated.payee,
+              amount: updated.amount,
+              dueDate: nextDueDate,
+              recurrenceType: updated.recurrenceType,
+              status: "unpaid",
+            });
+          }
+        }
+      }
+    }
     return updated;
   }
 

@@ -1,0 +1,65 @@
+Create a complete personal finance management application with the following requirements:
+
+Core Financial System:
+
+Implement a money balance system where the user registers their salary or available money.
+
+Every time a bill is paid, the system must automatically subtract the paid amount from the user’s balance.
+
+The balance must always reflect real-time updates after payments.
+
+Bills and Payments:
+
+Allow users to register bills with the following types:
+
+Installment bills: bills that can be split into multiple payments, showing progress (e.g., 3/10 installments paid).
+
+Monthly bills: recurring bills that automatically appear every month as pending payments.
+
+Annual bills: recurring bills that automatically appear every year as pending payments.
+
+Each bill must store due date, value, payment status, and recurrence type.
+
+Progress and Tracking:
+
+Installment bills must visually display payment progress.
+
+Monthly and annual bills must be automatically regenerated when their period renews.
+
+Notifications System:
+
+Add notifications for:
+
+Overdue bills
+
+Bills successfully paid
+
+Notifications must be configurable by the user.
+
+Application Settings:
+
+Create an in-app settings system where changes affect the entire application in real time.
+
+Include the following options:
+
+Enable/disable notifications
+
+Light mode and dark mode (must visually change the app based on selection)
+
+Language selection with full support for Brazilian Portuguese (PT-BR)
+
+Currency conversion with full support for Brazilian Real (BRL)
+
+Localization and Currency:
+
+When PT-BR is selected, all texts must be translated accordingly.
+
+When BRL is selected, all monetary values must be displayed in Brazilian Real format (R$).
+
+User Experience:
+
+The interface should be clean, intuitive, and easy to understand.
+
+Ensure smooth user interaction and clear visual feedback for payments, balances, and notifications.
+
+The final result should be a functional, scalable, and user-friendly financial management application.
