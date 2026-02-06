@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { insertInvoiceSchema } from "@shared/schema";
+import { useAuth } from "@/hooks/use-auth";
 import { useCreateInvoice, useUpdateInvoice } from "@/hooks/use-invoices";
 import { useEffect } from "react";
 import { Loader2 } from "lucide-react";
@@ -246,7 +247,12 @@ export function InvoiceDialog({ open, onOpenChange, initialData }: InvoiceDialog
                 <FormItem>
                   <FormLabel>{user?.language === "pt-BR" ? "Descrição (Opcional)" : "Description (Optional)"}</FormLabel>
                   <FormControl>
-                    <Input placeholder={user?.language === "pt-BR" ? "Assinatura mensal..." : "Monthly subscription..."} {...field} className="rounded-xl" />
+                    <Input 
+                      placeholder={user?.language === "pt-BR" ? "Assinatura mensal..." : "Monthly subscription..."} 
+                      {...field} 
+                      value={field.value || ""}
+                      className="rounded-xl" 
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

@@ -1,4 +1,5 @@
 import { useInvoices, useDeleteInvoice, useUpdateInvoice } from "@/hooks/use-invoices";
+import { useAuth } from "@/hooks/use-auth";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, MoreHorizontal, Pencil, Trash2, Check, Filter } from "lucide-react";
@@ -136,12 +137,12 @@ export default function Invoices() {
                                         {inv.description && <p className="text-xs text-muted-foreground truncate max-w-[150px]">{inv.description}</p>}
                                     </td>
                                     <td className="py-4 px-6 text-sm text-muted-foreground">
-                                        {format(new Date(inv.dueDate), user?.language === "pt-BR" ? "dd/MM/yyyy" : "MMM dd, yyyy")}
+                                        {inv.dueDate ? format(new Date(inv.dueDate), user?.language === "pt-BR" ? "dd/MM/yyyy" : "MMM dd, yyyy") : "-"}
                                     </td>
                                     <td className="py-4 px-6 font-medium">{formatCurrency(Number(inv.amount))}</td>
                                     <td className="py-4 px-6">
                                         <div className="flex items-center gap-2">
-                                            <Progress value={percent} className="h-2 w-24 bg-muted" indicatorClassName={percent === 100 ? "bg-green-500" : "bg-primary"} />
+                                            <Progress value={percent} className="h-2 w-24 bg-muted" />
                                             <span className="text-xs text-muted-foreground w-8">{percent}%</span>
                                         </div>
                                     </td>

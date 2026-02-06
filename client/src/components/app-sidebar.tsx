@@ -1,6 +1,7 @@
-import { Calendar, Home, Inbox, Search, Settings, CreditCard, LayoutDashboard, FileText, Bell } from "lucide-react"
+import { Calendar, Home, Inbox, Search, Settings, CreditCard, LayoutDashboard, FileText, Bell, LogOut } from "lucide-react"
 import { useAuth } from "@/hooks/use-auth"
 import { Link, useLocation } from "wouter"
+import { Button } from "@/components/ui/button"
 
 import {
   Sidebar,
@@ -16,7 +17,7 @@ import {
 } from "@/components/ui/sidebar"
 
 export function AppSidebar() {
-  const { user } = useAuth();
+  const { user, logout } = useAuth();
   const [location] = useLocation();
 
   const menuItems = [
@@ -71,9 +72,9 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      <SidebarFooter className="p-4 border-t border-border/50">
+      <SidebarFooter className="p-4 border-t border-border/50 space-y-4">
           <div className="flex items-center gap-3">
-              <div className="size-8 rounded-full bg-muted flex items-center justify-center font-bold text-xs">
+              <div className="size-8 rounded-full bg-muted flex items-center justify-center font-bold text-xs uppercase">
                   {user?.firstName?.[0]}{user?.lastName?.[0]}
               </div>
               <div className="flex-1 min-w-0">
@@ -81,6 +82,14 @@ export function AppSidebar() {
                   <p className="text-xs text-muted-foreground truncate">{user?.email}</p>
               </div>
           </div>
+          <Button 
+            variant="ghost" 
+            className="w-full justify-start text-destructive hover:text-destructive hover:bg-destructive/10 px-2 rounded-xl"
+            onClick={() => logout()}
+          >
+            <LogOut className="size-4 mr-2" />
+            {user?.language === "pt-BR" ? "Sair" : "Log Out"}
+          </Button>
       </SidebarFooter>
     </Sidebar>
   )

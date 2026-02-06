@@ -31,9 +31,10 @@ export default function Dashboard() {
     .filter(inv => inv.status !== 'paid')
     .reduce((sum, inv) => sum + Number(inv.amount) - Number(inv.paidAmount), 0);
 
+  const balance = user?.balance ? Number(user.balance) : 0;
   const formattedBalance = user?.currency === "BRL" 
-    ? `R$ ${Number(user.balance).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-    : `$${Number(user.balance).toFixed(2)}`;
+    ? `R$ ${balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+    : `$${balance.toFixed(2)}`;
 
   const formatCurrency = (amount: number) => {
     return user?.currency === "BRL"
@@ -61,7 +62,9 @@ export default function Dashboard() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
            <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
-             {user?.language === "pt-BR" ? `Bem-vindo de volta, ${user?.firstName || "Amigo"}` : `Welcome back, ${user?.firstName || "Friend"}`}
+             {user?.language === "pt-BR" 
+               ? `Bem-vindo de volta, ${user?.firstName || "Amigo"}` 
+               : `Welcome back, ${user?.firstName || "Friend"}`}
            </h1>
            <p className="text-muted-foreground mt-2">
              {user?.language === "pt-BR" ? "Aqui está sua visão geral financeira de hoje." : "Here's your financial overview for today."}

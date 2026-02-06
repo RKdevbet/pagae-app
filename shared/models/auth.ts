@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { index, jsonb, pgTable, timestamp, varchar, text } from "drizzle-orm/pg-core";
+import { index, jsonb, pgTable, timestamp, varchar, text, numeric, boolean } from "drizzle-orm/pg-core";
 
 // Session storage table.
 export const sessions = pgTable(
@@ -19,6 +19,10 @@ export const users = pgTable("users", {
   firstName: varchar("first_name"),
   lastName: varchar("last_name"),
   profileImageUrl: varchar("profile_image_url"),
+  balance: numeric("balance").default("0").notNull(),
+  language: text("language").default("en").notNull(),
+  currency: text("currency").default("USD").notNull(),
+  notificationsEnabled: boolean("notifications_enabled").default(true).notNull(),
   role: text("role", { enum: ["admin", "client", "developer"] }).default("client").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

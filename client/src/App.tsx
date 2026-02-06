@@ -13,6 +13,8 @@ import Invoices from "@/pages/Invoices";
 import Reports from "@/pages/Reports";
 import ReportDetail from "@/pages/ReportDetail";
 import Settings from "@/pages/Settings";
+import Credits from "@/pages/Credits";
+import NotFound from "@/pages/not-found";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { AppSidebar } from "@/components/app-sidebar"
 import { ThemeToggle } from "@/components/ThemeToggle"
