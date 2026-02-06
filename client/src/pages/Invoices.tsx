@@ -83,14 +83,14 @@ export default function Invoices() {
           </Tabs>
       </div>
 
-      <div className="bg-card rounded-2xl border border-border/50 shadow-sm overflow-hidden min-h-[400px]">
+      <div className="bg-card rounded-2xl border border-border/50 shadow-sm overflow-hidden min-h-[300px]">
         {isLoading ? (
-            <div className="p-8 space-y-4">
+            <div className="p-4 md:p-8 space-y-4">
                 {[1,2,3,4,5].map(i => <Skeleton key={i} className="h-12 w-full rounded-xl" />)}
             </div>
         ) : (
-            <div className="overflow-x-auto">
-                <table className="w-full">
+            <div className="overflow-x-auto -mx-4 md:mx-0">
+                <table className="w-full min-w-[600px] md:min-w-full">
                     <thead>
                         <tr className="bg-muted/30 text-left text-sm border-b border-border/50">
                             <th className="py-4 px-6 font-medium text-muted-foreground">{user?.language === "pt-BR" ? "Beneficiário" : "Payee"}</th>

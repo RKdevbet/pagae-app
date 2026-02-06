@@ -59,22 +59,22 @@ export default function Dashboard() {
   return (
     <div className="space-y-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-           <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="space-y-1">
+           <h1 className="text-2xl md:text-4xl font-display font-bold text-foreground">
              {user?.language === "pt-BR" 
-               ? `Bem-vindo de volta, ${user?.firstName || "Amigo"}` 
-               : `Welcome back, ${user?.firstName || "Friend"}`}
+               ? `Olá, ${user?.firstName || "Amigo"}` 
+               : `Hello, ${user?.firstName || "Friend"}`}
            </h1>
-           <p className="text-muted-foreground mt-2">
-             {user?.language === "pt-BR" ? "Aqui está sua visão geral financeira de hoje." : "Here's your financial overview for today."}
+           <p className="text-sm text-muted-foreground">
+             {user?.language === "pt-BR" ? "Visão financeira de hoje." : "Financial overview for today."}
            </p>
         </div>
-        <div className="bg-card px-6 py-3 rounded-2xl border border-border/50 shadow-sm">
-           <p className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
-             {user?.language === "pt-BR" ? "Saldo Disponível" : "Available Balance"}
+        <div className="bg-card px-4 py-3 md:px-6 md:py-3 rounded-2xl border border-border/50 shadow-sm flex items-center justify-between sm:block">
+           <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider">
+             {user?.language === "pt-BR" ? "Saldo" : "Balance"}
            </p>
-           <p className="text-2xl font-display font-bold text-primary">{formattedBalance}</p>
+           <p className="text-xl md:text-2xl font-display font-bold text-primary">{formattedBalance}</p>
         </div>
       </div>
 

@@ -4,8 +4,7 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { useAuth } from "@/hooks/use-auth";
-import { Layout } from "@/components/Layout";
-import { Loader2 } from "lucide-react";
+import { Loader2, CreditCard } from "lucide-react";
 
 import Landing from "@/pages/Landing";
 import Dashboard from "@/pages/Dashboard";
@@ -62,42 +61,50 @@ function Router() {
 
   return (
     <SidebarProvider style={style as React.CSSProperties}>
-      <div className="flex h-screen w-full">
+      <div className="flex min-h-screen w-full bg-background overflow-x-hidden">
         {user && <AppSidebar />}
-        <div className="flex flex-col flex-1 overflow-hidden">
+        <div className="flex flex-col flex-1 min-w-0">
           {user && (
-            <header className="flex items-center justify-between p-4 border-b border-border/50 bg-background/50 backdrop-blur-sm z-10">
-              <SidebarTrigger data-testid="button-sidebar-toggle" />
+            <header className="sticky top-0 z-50 flex items-center justify-between p-2 md:p-4 border-b bg-background/80 backdrop-blur-md">
+              <div className="flex items-center gap-2">
+                <SidebarTrigger data-testid="button-sidebar-toggle" />
+                <div className="md:hidden flex items-center gap-2">
+                  <CreditCard className="size-5 text-primary" />
+                  <span className="font-display font-bold text-lg tracking-tight">FinTrack</span>
+                </div>
+              </div>
               <ThemeToggle />
             </header>
           )}
-          <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-background/30">
-            <Switch>
-              {/* Public Route */}
-              <Route path="/">
-                {user ? <Dashboard /> : <Landing />}
-              </Route>
+          <main className="flex-1 p-4 md:p-8 overflow-y-auto">
+            <div className="max-w-7xl mx-auto">
+              <Switch>
+                {/* Public Route */}
+                <Route path="/">
+                  {user ? <Dashboard /> : <Landing />}
+                </Route>
 
-              {/* Protected Routes */}
-              <Route path="/invoices">
-                <ProtectedRoute component={Invoices} />
-              </Route>
-              <Route path="/reports">
-                <ProtectedRoute component={Reports} />
-              </Route>
-              <Route path="/reports/:id">
-                <ProtectedRoute component={ReportDetail} />
-              </Route>
-               <Route path="/credits">
-                <ProtectedRoute component={Credits} />
-              </Route>
-              <Route path="/settings">
-                <ProtectedRoute component={Settings} />
-              </Route>
+                {/* Protected Routes */}
+                <Route path="/invoices">
+                  <ProtectedRoute component={Invoices} />
+                </Route>
+                <Route path="/reports">
+                  <ProtectedRoute component={Reports} />
+                </Route>
+                <Route path="/reports/:id">
+                  <ProtectedRoute component={ReportDetail} />
+                </Route>
+                 <Route path="/credits">
+                  <ProtectedRoute component={Credits} />
+                </Route>
+                <Route path="/settings">
+                  <ProtectedRoute component={Settings} />
+                </Route>
 
-              {/* Fallback */}
-              <Route component={NotFound} />
-            </Switch>
+                {/* Fallback */}
+                <Route component={NotFound} />
+              </Switch>
+            </div>
           </main>
         </div>
       </div>
