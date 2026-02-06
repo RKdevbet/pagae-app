@@ -12,8 +12,10 @@ import Dashboard from "@/pages/Dashboard";
 import Invoices from "@/pages/Invoices";
 import Reports from "@/pages/Reports";
 import ReportDetail from "@/pages/ReportDetail";
-import Credits from "@/pages/Credits";
-import NotFound from "@/pages/not-found";
+import Settings from "@/pages/Settings";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/app-sidebar"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 // Wrapper for protected routes
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
@@ -51,30 +53,53 @@ function Router() {
     );
   }
 
+  const style = {
+    "--sidebar-width": "16rem",
+    "--sidebar-width-icon": "3rem",
+  };
+
   return (
-    <Switch>
-      {/* Public Route */}
-      <Route path="/">
-        {user ? <Layout><Dashboard /></Layout> : <Landing />}
-      </Route>
+    <SidebarProvider style={style as React.CSSProperties}>
+      <div className="flex h-screen w-full">
+        {user && <AppSidebar />}
+        <div className="flex flex-col flex-1 overflow-hidden">
+          {user && (
+            <header className="flex items-center justify-between p-4 border-b border-border/50 bg-background/50 backdrop-blur-sm z-10">
+              <SidebarTrigger data-testid="button-sidebar-toggle" />
+              <ThemeToggle />
+            </header>
+          )}
+          <main className="flex-1 overflow-y-auto p-6 md:p-8 bg-background/30">
+            <Switch>
+              {/* Public Route */}
+              <Route path="/">
+                {user ? <Dashboard /> : <Landing />}
+              </Route>
 
-      {/* Protected Routes */}
-      <Route path="/invoices">
-        <ProtectedRoute component={Invoices} />
-      </Route>
-      <Route path="/reports">
-        <ProtectedRoute component={Reports} />
-      </Route>
-      <Route path="/reports/:id">
-        <ProtectedRoute component={ReportDetail} />
-      </Route>
-       <Route path="/credits">
-        <ProtectedRoute component={Credits} />
-      </Route>
+              {/* Protected Routes */}
+              <Route path="/invoices">
+                <ProtectedRoute component={Invoices} />
+              </Route>
+              <Route path="/reports">
+                <ProtectedRoute component={Reports} />
+              </Route>
+              <Route path="/reports/:id">
+                <ProtectedRoute component={ReportDetail} />
+              </Route>
+               <Route path="/credits">
+                <ProtectedRoute component={Credits} />
+              </Route>
+              <Route path="/settings">
+                <ProtectedRoute component={Settings} />
+              </Route>
 
-      {/* Fallback */}
-      <Route component={NotFound} />
-    </Switch>
+              {/* Fallback */}
+              <Route component={NotFound} />
+            </Switch>
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 }
 

@@ -17,6 +17,7 @@ import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Invoices() {
+  const { user } = useAuth();
   const { data: invoices, isLoading } = useInvoices();
   const deleteMutation = useDeleteInvoice();
   const updateMutation = useUpdateInvoice();
@@ -36,7 +37,10 @@ export default function Invoices() {
   };
 
   const handleDelete = async (id: number) => {
-    if (confirm("Are you sure you want to delete this invoice?")) {
+    const msg = user?.language === "pt-BR" 
+      ? "Tem certeza que deseja excluir esta fatura?" 
+      : "Are you sure you want to delete this invoice?";
+    if (confirm(msg)) {
         await deleteMutation.mutateAsync(id);
     }
   };
@@ -63,17 +67,17 @@ export default function Invoices() {
         </div>
         <Button onClick={handleCreate} className="rounded-xl shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90">
             <Plus className="mr-2 size-4" />
-            Add Invoice
+            {user?.language === "pt-BR" ? "Adicionar Fatura" : "Add Invoice"}
         </Button>
       </div>
 
       <div className="flex items-center gap-4">
           <Tabs defaultValue="all" onValueChange={setFilter} className="w-full sm:w-auto">
             <TabsList className="bg-card border border-border/50 p-1 rounded-xl h-auto">
-                <TabsTrigger value="all" className="rounded-lg px-4 py-2">All</TabsTrigger>
-                <TabsTrigger value="unpaid" className="rounded-lg px-4 py-2">Pending</TabsTrigger>
-                <TabsTrigger value="overdue" className="rounded-lg px-4 py-2">Overdue</TabsTrigger>
-                <TabsTrigger value="paid" className="rounded-lg px-4 py-2">Paid</TabsTrigger>
+                <TabsTrigger value="all" className="rounded-lg px-4 py-2">{user?.language === "pt-BR" ? "Todas" : "All"}</TabsTrigger>
+                <TabsTrigger value="unpaid" className="rounded-lg px-4 py-2">{user?.language === "pt-BR" ? "Pendentes" : "Pending"}</TabsTrigger>
+                <TabsTrigger value="overdue" className="rounded-lg px-4 py-2">{user?.language === "pt-BR" ? "Atrasadas" : "Overdue"}</TabsTrigger>
+                <TabsTrigger value="paid" className="rounded-lg px-4 py-2">{user?.language === "pt-BR" ? "Pagas" : "Paid"}</TabsTrigger>
             </TabsList>
           </Tabs>
       </div>
@@ -88,12 +92,12 @@ export default function Invoices() {
                 <table className="w-full">
                     <thead>
                         <tr className="bg-muted/30 text-left text-sm border-b border-border/50">
-                            <th className="py-4 px-6 font-medium text-muted-foreground">Payee</th>
-                            <th className="py-4 px-6 font-medium text-muted-foreground">Due Date</th>
-                            <th className="py-4 px-6 font-medium text-muted-foreground">Amount</th>
-                            <th className="py-4 px-6 font-medium text-muted-foreground w-48">Progress</th>
+                            <th className="py-4 px-6 font-medium text-muted-foreground">{user?.language === "pt-BR" ? "Beneficiário" : "Payee"}</th>
+                            <th className="py-4 px-6 font-medium text-muted-foreground">{user?.language === "pt-BR" ? "Vencimento" : "Due Date"}</th>
+                            <th className="py-4 px-6 font-medium text-muted-foreground">{user?.language === "pt-BR" ? "Valor" : "Amount"}</th>
+                            <th className="py-4 px-6 font-medium text-muted-foreground w-48">{user?.language === "pt-BR" ? "Progresso" : "Progress"}</th>
                             <th className="py-4 px-6 font-medium text-muted-foreground">Status</th>
-                            <th className="py-4 px-6 font-medium text-muted-foreground text-right">Actions</th>
+                            <th className="py-4 px-6 font-medium text-muted-foreground text-right">{user?.language === "pt-BR" ? "Ações" : "Actions"}</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-border/50">
@@ -101,12 +105,17 @@ export default function Invoices() {
                         {filteredInvoices.length === 0 ? (
                             <tr>
                                 <td colSpan={6} className="py-12 text-center text-muted-foreground">
-                                    No invoices found.
+                                    {user?.language === "pt-BR" ? "Nenhuma fatura encontrada." : "No invoices found."}
                                 </td>
                             </tr>
                         ) : (
                             filteredInvoices.map((inv) => {
                                 const percent = Math.min(100, Math.round((Number(inv.paidAmount) / Number(inv.amount)) * 100));
+                                const formatCurrency = (val: number) => {
+                                    return user?.currency === "BRL"
+                                        ? `R$ ${val.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+                                        : `$${val.toFixed(2)}`;
+                                };
                                 return (
                                 <motion.tr 
                                     key={inv.id} 
@@ -116,11 +125,20 @@ export default function Invoices() {
                                     className="group hover:bg-muted/30 transition-colors"
                                 >
                                     <td className="py-4 px-6">
-                                        <p className="font-medium text-foreground">{inv.payee}</p>
+                                        <div className="flex items-center gap-2">
+                                            <p className="font-medium text-foreground">{inv.payee}</p>
+                                            {inv.recurrenceType === 'installment' && (
+                                                <span className="text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded-full font-bold">
+                                                    {inv.currentInstallment}/{inv.totalInstallments}
+                                                </span>
+                                            )}
+                                        </div>
                                         {inv.description && <p className="text-xs text-muted-foreground truncate max-w-[150px]">{inv.description}</p>}
                                     </td>
-                                    <td className="py-4 px-6 text-sm text-muted-foreground">{format(new Date(inv.dueDate), "MMM dd, yyyy")}</td>
-                                    <td className="py-4 px-6 font-medium">${Number(inv.amount).toFixed(2)}</td>
+                                    <td className="py-4 px-6 text-sm text-muted-foreground">
+                                        {format(new Date(inv.dueDate), user?.language === "pt-BR" ? "dd/MM/yyyy" : "MMM dd, yyyy")}
+                                    </td>
+                                    <td className="py-4 px-6 font-medium">{formatCurrency(Number(inv.amount))}</td>
                                     <td className="py-4 px-6">
                                         <div className="flex items-center gap-2">
                                             <Progress value={percent} className="h-2 w-24 bg-muted" indicatorClassName={percent === 100 ? "bg-green-500" : "bg-primary"} />
@@ -139,15 +157,15 @@ export default function Invoices() {
                                             </DropdownMenuTrigger>
                                             <DropdownMenuContent align="end" className="w-40 rounded-xl">
                                                 <DropdownMenuItem onClick={() => handleEdit(inv)}>
-                                                    <Pencil className="mr-2 size-4" /> Edit
+                                                    <Pencil className="mr-2 size-4" /> {user?.language === "pt-BR" ? "Editar" : "Edit"}
                                                 </DropdownMenuItem>
                                                 {inv.status !== 'paid' && (
                                                     <DropdownMenuItem onClick={() => handleMarkPaid(inv)} className="text-green-600 focus:text-green-600">
-                                                        <Check className="mr-2 size-4" /> Mark Paid
+                                                        <Check className="mr-2 size-4" /> {user?.language === "pt-BR" ? "Marcar como Pago" : "Mark Paid"}
                                                     </DropdownMenuItem>
                                                 )}
                                                 <DropdownMenuItem onClick={() => handleDelete(inv.id)} className="text-destructive focus:text-destructive">
-                                                    <Trash2 className="mr-2 size-4" /> Delete
+                                                    <Trash2 className="mr-2 size-4" /> {user?.language === "pt-BR" ? "Excluir" : "Delete"}
                                                 </DropdownMenuItem>
                                             </DropdownMenuContent>
                                         </DropdownMenu>

@@ -1,8 +1,12 @@
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 
 type Status = "paid" | "unpaid" | "overdue";
 
 export function StatusBadge({ status }: { status: Status }) {
+  const { user } = useAuth();
+  const isPtBR = user?.language === "pt-BR";
+
   const styles = {
     paid: "bg-green-100 text-green-700 border-green-200 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
     unpaid: "bg-yellow-100 text-yellow-700 border-yellow-200 dark:bg-yellow-900/30 dark:text-yellow-400 dark:border-yellow-800",
@@ -10,9 +14,9 @@ export function StatusBadge({ status }: { status: Status }) {
   };
 
   const labels = {
-    paid: "Paid",
-    unpaid: "Pending",
-    overdue: "Overdue",
+    paid: isPtBR ? "Pago" : "Paid",
+    unpaid: isPtBR ? "Pendente" : "Pending",
+    overdue: isPtBR ? "Atrasado" : "Overdue",
   };
 
   return (
