@@ -1,3 +1,6 @@
+import { db } from "./db";
+import { users } from "@shared/schema";
+import { eq } from "drizzle-orm";
 import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
