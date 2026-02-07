@@ -63,8 +63,14 @@ export default function Invoices() {
     <div className="space-y-8">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-           <h1 className="text-3xl md:text-4xl font-display font-bold">Invoices</h1>
-           <p className="text-muted-foreground mt-2">Manage your bills, subscriptions, and payments.</p>
+           <h1 className="text-3xl md:text-4xl font-display font-bold">
+             {user?.language === "pt-BR" ? "Faturas" : "Invoices"}
+           </h1>
+           <p className="text-muted-foreground mt-2">
+             {user?.language === "pt-BR" 
+               ? "Gerencie suas contas, assinaturas e pagamentos." 
+               : "Manage your bills, subscriptions, and payments."}
+           </p>
         </div>
         <Button onClick={handleCreate} className="rounded-xl shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90">
             <Plus className="mr-2 size-4" />

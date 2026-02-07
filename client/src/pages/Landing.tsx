@@ -13,7 +13,7 @@ export default function Landing() {
             <div className="size-8 rounded-lg bg-primary flex items-center justify-center">
                 <Sparkles className="text-white size-5" />
             </div>
-            <span className="font-display font-bold text-xl tracking-tight">BillSmart</span>
+            <span className="font-display font-bold text-xl tracking-tight">Pagaê</span>
           </div>
           <div className="flex items-center gap-4">
             <Button variant="ghost" asChild className="hidden sm:inline-flex font-medium">
@@ -114,7 +114,7 @@ export default function Landing() {
       {/* Footer */}
       <footer className="py-12 bg-background border-t border-border">
           <div className="max-w-7xl mx-auto px-4 text-center text-muted-foreground">
-              <p>&copy; 2024 BillSmart. All rights reserved.</p>
+              <p>&copy; 2024 Pagaê. All rights reserved.</p>
           </div>
       </footer>
     </div>

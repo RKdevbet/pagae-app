@@ -70,7 +70,7 @@ function Router() {
                 <SidebarTrigger data-testid="button-sidebar-toggle" />
                 <div className="md:hidden flex items-center gap-2">
                   <CreditCard className="size-5 text-primary" />
-                  <span className="font-display font-bold text-lg tracking-tight">FinTrack</span>
+                  <span className="font-display font-bold text-lg tracking-tight">Pagaê</span>
                 </div>
               </div>
               <ThemeToggle />

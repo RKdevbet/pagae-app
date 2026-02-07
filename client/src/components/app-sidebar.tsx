@@ -50,7 +50,7 @@ export function AppSidebar() {
             <div className="size-8 rounded-lg bg-primary flex items-center justify-center">
                 <CreditCard className="size-5 text-primary-foreground" />
             </div>
-            <span className="font-display font-bold text-xl tracking-tight">FinTrack</span>
+            <span className="font-display font-bold text-xl tracking-tight">Pagaê</span>
          </div>
       </SidebarHeader>
       <SidebarContent>
