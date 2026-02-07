@@ -37,9 +37,7 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   }
 
   return (
-    <Layout>
-      <Component />
-    </Layout>
+    <Component />
   );
 }
 
