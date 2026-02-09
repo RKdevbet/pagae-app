@@ -23,6 +23,7 @@ export const users = pgTable("users", {
   language: text("language").default("en").notNull(),
   currency: text("currency").default("USD").notNull(),
   notificationsEnabled: boolean("notifications_enabled").default(true).notNull(),
+  nickname: varchar("nickname", { length: 50 }),
   role: text("role", { enum: ["admin", "client", "developer"] }).default("client").notNull(),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow(),

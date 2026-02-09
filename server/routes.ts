@@ -1,6 +1,6 @@
 import { db } from "./db";
-import { users } from "@shared/schema";
-import { eq } from "drizzle-orm";
+import { users, invoices } from "@shared/schema";
+import { eq, and, lte } from "drizzle-orm";
 import type { Express } from "express";
 import type { Server } from "http";
 import { storage } from "./storage";
@@ -178,19 +178,46 @@ export async function registerRoutes(
   app.patch("/api/user/settings", async (req, res) => {
     if (!req.user) return res.status(401).json({ message: "Unauthorized" });
     const userId = (req.user as any).claims.sub;
-    const { language, currency, notificationsEnabled, balance } = req.body;
+    const { language, currency, notificationsEnabled, balance, nickname } = req.body;
     
-    const [updated] = await db.update(users)
-      .set({ 
-        ...(language && { language }),
-        ...(currency && { currency }),
-        ...(notificationsEnabled !== undefined && { notificationsEnabled }),
-        ...(balance !== undefined && { balance: balance.toString() }),
-        updatedAt: new Date() 
-      })
-      .where(eq(users.id, userId))
-      .returning();
-    res.json(updated);
+    try {
+      const [updated] = await db.update(users)
+        .set({ 
+          ...(language && { language }),
+          ...(currency && { currency }),
+          ...(notificationsEnabled !== undefined && { notificationsEnabled }),
+          ...(balance !== undefined && { balance: balance.toString() }),
+          ...(nickname !== undefined && { nickname }),
+          updatedAt: new Date() 
+        })
+        .where(eq(users.id, userId))
+        .returning();
+      res.json(updated);
+    } catch (error) {
+      console.error("Settings update error:", error);
+      res.status(500).json({ message: "Failed to update settings" });
+    }
+  });
+
+  // Monthly Closure Logic (Manual trigger for testing or endpoint)
+  app.post("/api/admin/close-month", async (req, res) => {
+    if (!req.user) return res.status(401).json({ message: "Unauthorized" });
+    const userId = (req.user as any).claims.sub;
+    
+    try {
+      const now = new Date();
+      // 1. Delete all paid invoices
+      await db.delete(invoices).where(and(eq(invoices.userId, userId), eq(invoices.status, "paid")));
+      
+      // 2. Fetch all recurring unpaid/overdue invoices to "renew" them for next month
+      // In a real system, this would happen via a cron job on the first day of the month.
+      // For this implementation, we ensure recurring logic is handled in storage.ts
+      
+      res.json({ message: "Month closed successfully" });
+    } catch (error) {
+      console.error("Closure error:", error);
+      res.status(500).json({ message: "Failed to close month" });
+    }
   });
 
   return httpServer;

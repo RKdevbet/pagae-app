@@ -16,10 +16,12 @@ export default function Settings() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [balanceInput, setBalanceInput] = useState("");
+  const [nicknameInput, setNicknameInput] = useState("");
 
   useEffect(() => {
     if (user) {
       setBalanceInput(user.balance.toString());
+      setNicknameInput(user.nickname || "");
     }
   }, [user]);
 
@@ -50,6 +52,10 @@ export default function Settings() {
     updateSettingsMutation.mutate({ balance: parseFloat(balanceInput) });
   };
 
+  const handleUpdateNickname = () => {
+    updateSettingsMutation.mutate({ nickname: nicknameInput });
+  };
+
   const t = (en: string, pt: string) => user?.language === "pt-BR" ? pt : en;
 
   return (
@@ -60,14 +66,46 @@ export default function Settings() {
       </div>
 
       <div className="grid gap-6">
+        {/* Profile */}
+        <Card className="rounded-2xl border-border/50 shadow-sm bg-card/100 dark:bg-card">
+          <CardHeader>
+            <div className="flex items-center gap-3">
+              <div className="size-5 text-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+              </div>
+              <CardTitle>{t("Profile", "Perfil")}</CardTitle>
+            </div>
+            <CardDescription className="text-muted-foreground">{t("Update your public information.", "Atualize suas informações públicas.")}</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-end justify-between gap-4">
+              <div className="space-y-0.5 flex-1">
+                <Label>{t("Nickname", "Apelido")}</Label>
+                <p className="text-sm text-muted-foreground">{t("How you'd like to be called.", "Como você gostaria de ser chamado.")}</p>
+                <div className="mt-2 flex gap-2">
+                  <Input 
+                    value={nicknameInput} 
+                    onChange={(e) => setNicknameInput(e.target.value)}
+                    className="max-w-[300px] rounded-xl"
+                  />
+                  <Button onClick={handleUpdateNickname} disabled={updateSettingsMutation.isPending} className="rounded-xl">
+                    {updateSettingsMutation.isPending && <Loader2 className="mr-2 size-4 animate-spin" />}
+                    {t("Update", "Atualizar")}
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Localization */}
-        <Card className="rounded-2xl border-border/50 shadow-sm">
+        <Card className="rounded-2xl border-border/50 shadow-sm bg-card/100 dark:bg-card">
           <CardHeader>
             <div className="flex items-center gap-3">
               <Globe className="size-5 text-primary" />
               <CardTitle>{t("Localization", "Localização")}</CardTitle>
             </div>
-            <CardDescription>{t("Choose your preferred language and date formats.", "Escolha seu idioma preferido e formatos de data.")}</CardDescription>
+            <CardDescription className="text-muted-foreground">{t("Choose your preferred language and date formats.", "Escolha seu idioma preferido e formatos de data.")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between gap-4">
@@ -89,13 +127,13 @@ export default function Settings() {
         </Card>
 
         {/* Financial */}
-        <Card className="rounded-2xl border-border/50 shadow-sm">
+        <Card className="rounded-2xl border-border/50 shadow-sm bg-card/100 dark:bg-card">
           <CardHeader>
             <div className="flex items-center gap-3">
               <Wallet className="size-5 text-primary" />
               <CardTitle>{t("Financial Settings", "Configurações Financeiras")}</CardTitle>
             </div>
-            <CardDescription>{t("Configure your currency and initial balance.", "Configure sua moeda e saldo inicial.")}</CardDescription>
+            <CardDescription className="text-muted-foreground">{t("Configure your currency and initial balance.", "Configure sua moeda e saldo inicial.")}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between gap-4">
@@ -136,13 +174,13 @@ export default function Settings() {
         </Card>
 
         {/* Notifications */}
-        <Card className="rounded-2xl border-border/50 shadow-sm">
+        <Card className="rounded-2xl border-border/50 shadow-sm bg-card/100 dark:bg-card">
           <CardHeader>
             <div className="flex items-center gap-3">
               <Bell className="size-5 text-primary" />
               <CardTitle>{t("Notifications", "Notificações")}</CardTitle>
             </div>
-            <CardDescription>{t("Control how you receive alerts.", "Controle como você recebe alertas.")}</CardDescription>
+            <CardDescription className="text-muted-foreground">{t("Control how you receive alerts.", "Controle como você recebe alertas.")}</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="flex items-center justify-between">

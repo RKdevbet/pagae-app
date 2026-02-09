@@ -31,10 +31,10 @@ export default function Dashboard() {
     .filter(inv => inv.status !== 'paid')
     .reduce((sum, inv) => sum + Number(inv.amount) - Number(inv.paidAmount), 0);
 
-  const balance = user?.balance ? Number(user.balance) : 0;
+  const balanceValue = user?.balance ? Number(user.balance) : 0;
   const formattedBalance = user?.currency === "BRL" 
-    ? `R$ ${balance.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
-    : `$${balance.toFixed(2)}`;
+    ? `R$ ${balanceValue.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`
+    : `$${balanceValue.toFixed(2)}`;
 
   const formatCurrency = (amount: number) => {
     return user?.currency === "BRL"
@@ -63,8 +63,8 @@ export default function Dashboard() {
         <div className="space-y-1">
            <h1 className="text-2xl md:text-4xl font-display font-bold text-foreground">
              {user?.language === "pt-BR" 
-               ? `Olá, ${user?.firstName || "Amigo"}` 
-               : `Hello, ${user?.firstName || "Friend"}`}
+               ? `Olá, ${user?.nickname || user?.firstName || "Amigo"}` 
+               : `Hello, ${user?.nickname || user?.firstName || "Friend"}`}
            </h1>
            <p className="text-sm text-muted-foreground">
              {user?.language === "pt-BR" ? "Visão financeira de hoje." : "Financial overview for today."}

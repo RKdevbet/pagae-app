@@ -86,8 +86,13 @@ export class DatabaseStorage implements IStorage {
     if (updates.status === "paid" && existing.status !== "paid") {
       const user = await this.getUser(existing.userId);
       if (user) {
-        const newBalance = Number(user.balance) - Number(updated.amount);
-        await db.update(users).set({ balance: newBalance.toString() }).where(eq(users.id, user.id));
+        const amountToSubtract = Number(updates.paidAmount) || Number(updated.amount);
+        const currentBalance = Number(user.balance);
+        const newBalance = currentBalance - amountToSubtract;
+        
+        await db.update(users)
+          .set({ balance: newBalance.toString() })
+          .where(eq(users.id, user.id));
         
         // Auto-regeneration for recurring bills
         if (updated.recurrenceType !== "none") {
