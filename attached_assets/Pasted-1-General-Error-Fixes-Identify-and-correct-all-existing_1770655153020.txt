@@ -1,0 +1,59 @@
+1. General Error Fixes
+
+Identify and correct all existing errors across the application, including logic issues, UI bugs, broken flows, and unexpected behaviors.
+
+Improve overall performance, stability, and consistency.
+
+Ensure no feature requires manual page reloads to function correctly.
+
+2. Monthly Closure System
+
+Implement a monthly closing system with the following behavior:
+
+All paid bills are automatically removed at the end of the month.
+
+Monthly recurring bills are automatically renewed and reappear as pending in the new month.
+
+Ensure the system correctly handles bill statuses during the month transition.
+
+The process must be reliable and prevent duplicated or lost bills.
+
+3. Settings Screen UI Fix (Light Mode)
+
+Fix the opacity issue in the settings tab when using light mode.
+
+Ensure background, texts, and components have proper contrast and visibility.
+
+The settings screen must be fully readable and visually consistent with the rest of the app.
+
+4. Real-Time Balance Update
+
+Fix the balance update logic so the user’s balance is updated in real time.
+
+Paying or editing a bill must immediately update the balance without requiring a page refresh.
+
+Ensure the balance always reflects the current financial state accurately.
+
+5. Language Fix – Home Menu
+
+Fix the application’s home menu so it fully supports PT-BR.
+
+Ensure all labels, buttons, titles, and dynamic texts in the home menu are properly translated.
+
+Language changes must apply instantly and consistently.
+
+6. User Nickname System
+
+When creating an account or user profile, add an option to define a nickname.
+
+The application must use this nickname to address and refer to the user throughout the interface.
+
+Ensure the nickname can be edited later via settings.
+
+7. Final Delivery
+
+Deliver the application ready for real-world use, fully tested, stable, and polished.
+
+Ensure all features work together seamlessly with no regressions.
+
+The final result must be a user-friendly, scalable, and production-ready application
