@@ -1,6 +1,6 @@
 Pagaê - Personal Finance Management Application
 Overview
-Pagaê is a personal finance management web application that helps users track bills, manage payments, and get AI-powered financial insights. The app supports installment, monthly, and annual recurring bills with automatic balance tracking. It includes an AI report generation system (powered by OpenAI via Replit AI Integrations), a credit-based usage model for AI features, user notifications, and full internationalization support (English and Brazilian Portuguese). Authentication is handled via Replit Auth (OpenID Connect).
+Pagaê is a personal finance management web application that helps users track bills, manage payments, and get AI-powered financial insights. The app supports installment, monthly, and annual recurring bills with automatic balance tracking. It includes an AI report generation system (powered by OpenAI), a credit-based usage model for AI features, user notifications, and full internationalization support (English and Brazilian Portuguese). Authentication is handled via Replit Auth (OpenID Connect).
 
 User Preferences
 Preferred communication style: Simple, everyday language.
